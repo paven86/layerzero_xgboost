@@ -297,18 +297,5 @@ Minor numeric differences are expected due to:
 
 ---
 
-## Citation
-
-```bibtex
-@article{imig2025sybil,
-  title   = {Sybil Detection on Public Blockchains via XGBoost and
-             Gas Provision Network Analysis: Implications for AI Agent
-             Reputation and Credit Scoring},
-  author  = {Imig, Scott and Do, Thuat and Duc, Phan Thanh and Ta, Long Thanh},
-  journal = {Blockchain: Research and Applications},
-  year    = {2025}
-}
-```
-
 Source code and labeled dataset archive:
 [github.com/paven86/layerzero_xgboost](https://github.com/paven86/layerzero_xgboost)
