@@ -1,5 +1,5 @@
-# DRAFT. Author order, name split, ORCIDs and version must be confirmed by the authors
-# before this file is committed. No license is stated: the repository has no LICENSE yet.
+# Author order, name split and ORCIDs are still to be confirmed by the authors.
+# No license is stated: the repository has no LICENSE yet.
 cff-version: 1.2.0
 message: >-
   If you use this code or data, please cite it using the metadata in this file,
@@ -8,7 +8,7 @@ title: >-
   Sybil Detection on Public Blockchains via XGBoost and Gas Provision Network
   Analysis — code and data
 type: software
-version: "TBD"
+version: "2.0-revision"
 authors:
   - given-names: Thuat
     family-names: Do
@@ -21,7 +21,8 @@ abstract: >-
   Code and input data that train and evaluate XGBoost, LightGBM, random forest and
   logistic regression classifiers, and a cross-model ensemble, on 434,786 Ethereum
   addresses to identify Sybil wallets in the LayerZero airdrop of June 2024, using
-  transaction features and features of the gas provision network.
+  62 transaction and gas provision network features, evaluated on stratified group
+  splits by gas provision tree, with every result traced to one commit.
 keywords:
   - Sybil detection
   - airdrop
