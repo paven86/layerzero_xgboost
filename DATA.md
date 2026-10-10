@@ -3,8 +3,10 @@
 This file describes the input data in `data/`: what each file is, where it came from, when it was
 retrieved, its size and columns, its Git LFS object, which notebooks read it, and its known issues.
 Row counts exclude the header row. Facts were checked against the files, the readmes in each folder,
-[`sybil_pipeline.py`](sybil_pipeline.py) and the notebooks at commit `3bbec2c` (notebooks `16`–`22` and `99` added afterwards). Where something is
-not documented in the repository, this file says so.
+[`sybil_pipeline.py`](sybil_pipeline.py) and the notebooks of the corrected run (merged at `b587772`; tie-out `99`
+at `4761590`: 84 of 84 checks). The data files are unchanged since `3bbec2c`; only the code that reads them
+changed (the root-wallet tree-feature fix, `663e026`). Where something is not documented in the repository,
+this file says so.
 
 The CSV files in `data/` are Git LFS objects (`data/.gitattributes`), except the two folders added in
 2026, which are plain git files (each has its own `.gitattributes`). Run `git lfs pull` after cloning.
@@ -12,14 +14,15 @@ The CSV files in `data/` are Git LFS objects (`data/.gitattributes`), except the
 before any change to it.
 
 "Pipeline notebooks" below means the notebooks that build the feature table, either with
-`sp.build_master_df` or step by step with `sp.data_paths` (`00`): `00` to `05`, `07` to `09`, and
-`11` to `20` and `22`. `06`, `10` and `99` read no file in `data/`; they read saved predictions and results.
+`sp.build_master_df` or step by step with `sp.data_paths` (`00`): `00` to `05`, `07` to `09`, `11` to `20`,
+`22`, `24` and `25`. `06`, `10`, `23` and `99` read no file in `data/`; they read saved predictions and results.
+The model uses 62 of the computed features (`sp.FEATS`; `gini_coefficient` is computed but removed by `01`).
 
 ## Contents
 
 | Folder | What | Rows | Used by |
 |---|---|---|---|
-| [`20240915_final_sybil_list/`](#20240915_final_sybil_list) | Sybil addresses accepted through LayerZero's community bounty (the labels) | 151,784 | Pipeline notebooks; also read directly by `14`, `15`, `16`, `22` |
+| [`20240915_final_sybil_list/`](#20240915_final_sybil_list) | Sybil addresses accepted through LayerZero's community bounty (the labels) | 151,784 | Pipeline notebooks; also read directly by `14`, `15`, `16`, `22`, `25` |
 | [`20241013_hildobby_cex_evms/`](#20241013_hildobby_cex_evms) | hildobby's list of known EVM CEX addresses | 2,431 | `07` (pre-snapshot label vintage) |
 | [`20241104_layer0_sybil_features/`](#20241104_layer0_sybil_features) | LayerZero and Ethereum transaction features per interactor (5 files) | 434,788 (434,786 after cleaning) | Pipeline notebooks |
 | [`20241114_gas_provision/`](#20241114_gas_provision) | Gas provision network: first ETH transfer into each address | 604,864 (archive: 758,633) | Pipeline notebooks; `07` directly. Archive: none |
@@ -260,6 +263,14 @@ notebook is not run by any notebook; it is kept as the source of the original fi
   `sp.compare_to_precomputed` drops the duplicate. See A10 in `docs/REVISION_LEAKAGE.md`.
 - `gini_coefficient` is identically 0 up to rounding (formula error, `docs/REVISION_LEAKAGE.md`); it is
   skipped in the comparison.
+- All-zero tree features for roots. The original featurization gave every root of the unlabeled provision
+  forest (a wallet funded by a labeled entity, or with no recorded funding) all-zero tree features, although
+  its descendants carried the tree's summaries. This file has the same zeros. The pipeline computes the
+  whole-tree metrics for every interactor since `663e026` (A27 in `docs/REVISION_LEAKAGE.md`;
+  `tests/test_root_tree_features.py`), so `00`'s comparison now differs from this file for those wallets:
+  `tree_size`, `breadth_factor` and `avg_leaf_gas` match for 28.3 % of the 434,110 common wallets (about 311,300
+  differ) and `sparsity` for 29.6 %; the other tree features match for 95 % to 98 %. The fix changed the tree features
+  of 307,622 wallets (every IxL wallet and the 676 No-provider wallets among them).
 
 **Terms of use.** Derived by the authors from the gas provision network and label lists above. Terms
 not documented in this repository — to be confirmed by the authors.
