@@ -1,0 +1,272 @@
+%% Supplementary Material S1-S11 for the revised manuscript BCRA-D-26-00643.
+%% Compile from this folder (paper/): pdflatex supplementary_material.tex
+%% The tables are read from ../tables/, which notebooks 23-25 generate from results/.
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,multirow,array,adjustbox,enumitem,url,xurl}
+\newcommand{\fit}[1]{\begin{adjustbox}{max width=\textwidth,center}\small\input{../tables/#1}\end{adjustbox}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\title{Supplementary Material for\\ ``Same Cluster, Different Wallet: Cluster Dependence in Airdrop Sybil Detection, Evidence from the LayerZero Airdrop''}
+\author{Thuat Do, Scott Imig and Phan Thanh Duc}
+\date{}
+\begin{document}
+\maketitle
+\noindent Section, table and figure numbers marked ``of the article'' refer to the main article. Code, data and every result are in the repository (\url{https://github.com/paven86/layerzero_xgboost}; archived at \url{https://doi.org/10.5281/zenodo.23294882}).
+
+\section{Feature definitions}
+\sloppy
+All 62 model features are listed below by family. Amounts are in ETH unless
+marked USD; times are Unix seconds (UTC); \emph{blocks} are Ethereum block numbers or
+spans of blocks. LayerZero features use activity up to 2024-05-01 23:59:59 UTC and
+Ethereum features transactions before 2024-05-01 00:00 UTC (Section~3 of the article).
+The extraction queries are in the repository.
+
+\subsection*{S1.1 LayerZero transactions (22)}
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt]
+  \item \texttt{earliest\_l0\_tx\_time}, \texttt{latest\_l0\_tx\_time}: Time of the earliest and the latest LayerZero transaction sent by the wallet.
+  \item \texttt{l0\_tx\_time\_span}: Latest minus earliest LayerZero transaction time, in seconds.
+  \item \texttt{n\_l0\_source\_chains}, \texttt{n\_l0\_source\_contracts}, \texttt{n\_l0\_projects}: Numbers of distinct source chains, source contracts and projects among the wallet's LayerZero transactions.
+  \item \texttt{n\_l0\_project\_per\_source\_chain}: \texttt{n\_l0\_projects} / \texttt{n\_l0\_source\_chains}.
+  \item \texttt{l0\_avg\_stargate\_swap}, \texttt{l0\_min\_stargate\_swap}: Mean and minimum Stargate swap value (USD) over the wallet's LayerZero transactions; a transaction without a swap counts as 0.
+  \item \texttt{n\_eth\_interactions}: Number of distinct LayerZero transactions the wallet sent from Ethereum.
+  \item \texttt{l0\_to\_eth\_* (12 features)}: The same statistics restricted to LayerZero transactions whose destination is Ethereum: transaction count (\texttt{n\_l0\_to\_eth\_txs}); time span; numbers of source chains, source contracts, destination contracts and projects; projects per source chain; minimum, mean and maximum Stargate swap value (USD); and mean and maximum native drop (USD value of gas delivered at the destination).
+\end{itemize}
+
+\subsection*{S1.2 Ethereum transactions (9)}
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt]
+  \item \texttt{min\_tx\_value\_out}, \texttt{max\_tx\_value\_out}: Minimum and maximum value of the wallet's outgoing transactions.
+  \item \texttt{tx\_value\_per\_block\_out}: Total outgoing value divided by the span in blocks between the first and the last outgoing transaction (0 if the span is 0).
+  \item \texttt{min\_tx\_value\_in}: Minimum value of incoming transactions.
+  \item \texttt{num\_transactions\_in}: Number of incoming transactions.
+  \item \texttt{earliest\_tx\_block\_in}: Block of the first incoming transaction.
+  \item \texttt{time\_span\_in}: Span in blocks between the first and the last incoming transaction.
+  \item \texttt{indegree\_per\_block\_in}: Number of distinct senders divided by \texttt{time\_span\_in} (0 if the span is 0).
+  \item \texttt{cex\_in\_count}: Number of distinct centralized-exchange addresses that sent ETH to the wallet.
+\end{itemize}
+
+\subsection*{S1.3 Gas provider (11)}
+Let $p$ be the wallet's gas provider, the address of its first incoming ETH
+transfer, and $a$ the amount of that transfer.
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt]
+  \item \texttt{provider\_is\_labeled}, \texttt{provider\_is\_interactor}, \texttt{provider\_is\_null}: Indicators that $p$ is a labeled service, a LayerZero interactor, or absent.
+  \item \texttt{provider\_fan\_out}: Number of distinct interactors funded by $p$.
+  \item \texttt{provider\_total\_gas\_provision\_amount}, and the \texttt{max}, \texttt{min} and \texttt{avg}
+  versions of the same name: sum, maximum, minimum and mean of the amounts $p$ provided to
+  interactors (mean = total / fan-out).
+  \item \texttt{provider\_is\_star\_like\_attack}: 1 if $p$ funds more than one interactor and is not a labeled service.
+  \item \texttt{is\_provider}: 1 if the wallet is itself the gas provider of another address.
+  \item \texttt{gas\_provision\_block\_number}: Block of the wallet's first incoming ETH transfer.
+\end{itemize}
+
+\subsection*{S1.4 Gas provision tree (17)}
+Let $T$ be the tree of the unlabeled provision forest that contains the wallet
+(Section~3.4 of the article), with node set $V$ (interactors and other addresses),
+$n=|V|$, root $r$, depth $d(v)$ of node $v$ below $r$, $D=\max_v d(v)$, children
+$C(v)$, leaves $L=\{v: C(v)=\emptyset\}$, internal nodes $I=V\setminus L$, and $g(v)$ the
+ETH that $v$ received in its funding transfers. Let $P=(g(v): v\neq r,\ g(v)>0)$ be the
+provision amounts and $G=\sum P$. Every wallet of a tree carries that tree's
+features. A wallet funded directly by a labeled service, or with no recorded
+funding, is the root of its tree; if it funds no other address, the tree has a
+single node.
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt]
+  \item \texttt{tree\_size}, \texttt{total\_gas}, \texttt{max\_depth}: $n$, $G$ and $D$.
+  \item \texttt{avg\_depth}: $\frac{1}{n}\sum_v d(v)$.
+  \item \texttt{branching\_factor}: $\frac{1}{n}\sum_v |C(v)| = (n-1)/n$.
+  \item \texttt{star\_like\_ratio}: $|\{v: |C(v)|>1\}|\,/\,n$.
+  \item \texttt{balance\_factor}: $D - \min_{v\in L} d(v)$.
+  \item \texttt{breadth\_factor}: $n/(D+1)$, the mean number of nodes per depth level.
+  \item \texttt{breadth\_to\_depth\_ratio}: \texttt{breadth\_factor}$/D$ (0 if $D=0$).
+  \item \texttt{longest\_chain\_ratio}: $D/n$.
+  \item \texttt{leaf\_to\_internal\_ratio}: $|L|/|I|$ (0 if $I=\emptyset$).
+  \item \texttt{leaf\_provision\_proportion}: $\sum_{v\in L} g(v)\,/\,G$ (0 if $G=0$).
+  \item \texttt{sparsity}: $|\{v: g(v)>0\}|\,/\,n$.
+  \item \texttt{gas\_distribution\_entropy}: $-\sum_i q_i\log_2 q_i$ with $q_i = P_i/G$.
+  \item \texttt{gas\_distribution\_skewness}: Biased sample skewness $m_3/m_2^{3/2}$ of $P$, where $m_k$ is the $k$-th central moment (0 if $|P|<2$ or $P$ is constant).
+  \item \texttt{leaf\_gas\_distribution\_entropy}, \texttt{leaf\_gas\_distribution\_skewness}: The same two statistics over the leaf amounts $(g(v): v\in L)$.
+\end{itemize}
+The pipeline also computes four tree statistics that are not model inputs,
+including the Gini coefficient of $P$, which a pre-specified ablation rule removed.
+
+\subsection*{S1.5 Provision chain (3)}
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt]
+  \item \texttt{depth}: $d(w)$ for the wallet $w$; 0 for a root.
+  \item \texttt{chain\_length}: Number of funding hops from the wallet back along first funders until a labeled service is reached or no funder is recorded (cycles and self-funding stop the walk); 1 for every IxL wallet.
+  \item \texttt{interactors\_in\_chain}: Number of LayerZero interactors on that path, the wallet included.
+\end{itemize}
+\fussy
+\section{Address-level against tree-level splits}
+Under the address-level split, 599 of the 5,463 test Sybils share a gas
+provision tree with a training Sybil. Table~\ref{tab:splitcmp} compares the two splits on the
+seed-42 partition with the same hyperparameters. The tree models lose 0.022--0.026 in F1
+and about 0.03 in AP, while logistic regression is unaffected. The loss is
+concentrated where funding trees contain several wallets: LightGBM's F1 falls from 0.847 to 0.453 for IxI and from 0.544 to 0.271 for IxE, against 0.738 and 0.746 for IxL.
+
+\begin{table}[t]
+\centering
+\caption{Address-level (random) against gas-provision-tree (group) split, seed 42,
+test partition. $\Delta$: group minus random.}
+\label{tab:splitcmp}
+%% Generated from results/11_split_comparison.json on main; do not edit by hand.
+\begin{adjustbox}{max width=\textwidth,center}\small
+\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+ & \multicolumn{3}{c}{F1} & \multicolumn{3}{c}{AP} & \multicolumn{2}{c}{AUROC} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(l){8-9}
+Model & Random & Group & $\Delta$ & Random & Group & $\Delta$ & Random & Group \\
+\midrule
+XGBoost & 0.738 & 0.716 & $-0.022$ & 0.797 & 0.764 & $-0.033$ & 0.976 & 0.969 \\
+LightGBM & 0.741 & 0.715 & $-0.026$ & 0.804 & 0.769 & $-0.035$ & 0.976 & 0.970 \\
+Logistic regression & 0.236 & 0.240 & $+0.004$ & 0.162 & 0.167 & $+0.005$ & 0.834 & 0.838 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+\section{The superseded union split}
+An earlier version of the report-level analysis split the union components (gas
+provision tree $\cup$ bounty report) directly into training, validation and test,
+without paired conditions. It collapsed training diversity (Table~\ref{tab:union}):
+8,260 of the 8,924 training Sybils come from one component, and training contains
+146 reports against 271 under the tree split. Test F1 falls to $0.250\pm0.027$, AP
+to $0.190\pm0.015$ and AUROC to $0.748\pm0.026$ (LightGBM, ten splits), but this
+mixes report dependence with the loss of training diversity, so we do not use it
+as a measure of report dependence. The paired design of
+Section~4.1 of the article replaces it.
+
+\begin{table}[t]
+\centering
+\caption{Superseded union split: composition by partition (rows, Sybils, Sybils in
+the large components, reports represented) and test performance.}
+\label{tab:union}
+\fit{rev_union_split_appendix}
+\end{table}
+
+\section{Hyperparameter searches}
+
+Table~\ref{tab:search} lists, for each search, the eight configurations with the
+highest validation F1, the library-default configuration and the selected
+configuration ($*$). Full grids are in the repository.
+
+\begin{table}[t]
+\centering
+\caption{Hyperparameter searches (validation only). lr: learning rate; sub: row
+subsampling; col: column subsampling; mcw: minimum child weight; $\lambda$: L2
+regularization; mf: features per split; leaf: minimum samples per leaf. $*$:
+selected configuration.}
+\label{tab:search}
+\fit{rev_search_top}
+\end{table}
+
+\paragraph{Selected configurations} XGBoost: learning rate 0.05, depth 12, row subsampling 0.5, column subsampling 0.8, minimum child weight 10, early stopping after 50 rounds without improvement (1,098--1,214 rounds across the three seeds). LightGBM: learning rate 0.05, 511 leaves, no row subsampling, column subsampling 0.8, L2 regularization 1 (298--315 rounds). Random Forest: 300 trees, 30\% of features per split, no depth limit, at least one sample per leaf.
+
+The validation scores of every configuration are in the repository (\path{results/02_search_xgboost.csv}, \path{results/02_search_lightgbm.csv} and \path{results/13_search_random_forest.csv}).
+
+\section{Provision-network ablation by category}
+Removing the provision-network features has no significant effect on F1 in any
+category (Table~\ref{tab:provcat}; corrected $p=0.25$--$0.98$ for the removal of all
+three families). The point estimates (all features minus the reduced model) are
+$+0.003\pm0.003$ for IxL, $-0.033\pm0.185$ for IxI and $-0.053\pm0.056$ for IxE, but
+their spread across splits is as large as the effects, so we draw no
+category-specific conclusion.
+
+\begin{table}[t]
+\centering
+\caption{Change in F1 when a provision-network family is removed (all features
+minus the reduced model; mean $\pm$ SD over ten splits), the number of splits in
+which the full model is higher, and the corrected $p$-value.}
+\label{tab:provcat}
+\fit{rev_provision_ablation_by_category}
+\end{table}
+
+\section{Label provenance}
+\sloppy
+\paragraph{Bounty-accepted list (labels)} \path{data/20240915_final_sybil_list/fcfs_list.csv}
+holds 151,784 addresses across all chains accepted through LayerZero's bounty, each with
+the reporter's reward address, a link to the forum report and a timestamp between
+2024-05-18 and 2024-05-30. Of our 434,786 interactors, 18,211 are on it; they come from
+311 reports by 145 reporters, and the ten largest reports and the ten most
+prolific reporters supply 35.6\% and 44.6\% of them.
+
+\paragraph{Initial list} LayerZero published its initial list on 18 May 2024 in the
+\texttt{LayerZero-Labs/sybil-report} repository, which has since been deleted. We use
+the copy captured by the Wayback Machine on 24 May 2024 and retrieved on
+6 October 2026, stored as \path{review_support/initial_list/initial_list.csv}
+(34,560,871 bytes; SHA-256
+\texttt{1a643f70056fe0c0b38d4a13468e968a\allowbreak 2de0bd18de6bc25ed7139d9fa691a7cc}).
+It contains 803,093 distinct addresses: 801,932 20-byte EVM addresses and 1,161
+32-byte addresses, consistent with a non-EVM chain that LayerZero supports. Four
+GitHub mirrors first committed between 18 and 20 May 2024 and a separately
+distributed copy are byte-identical to it. None of its addresses is on the bounty
+list, as the bounty rules require; 34,545 of our interactors are on it. The list is
+used only for the analysis of Section~5.3 of the article and not by the labeling
+pipeline. The repository documents the provenance of every file
+(\texttt{DATA.md} and \path{review_support/initial_list/README.md}).
+
+\fussy
+\section{Operating points}
+The table gives the baseline LightGBM's operating points on the test partition (Section~5.3 of the article).
+
+\begin{table}[t]
+\centering
+\caption{Operating points of the baseline LightGBM on the test partition. FP:
+false positives; $\dagger$: precision if initial-list addresses counted as
+Sybils.}
+\label{tab:oppoints}
+\fit{rev_operating_points}
+\end{table}
+
+\section{Mimicry controls}
+The table gives recall under each attack scope of the mimicry test (Section~5.6 and Figure~6 of the article).
+
+\begin{table}[t]
+\centering
+\caption{Recall of test Sybils at the fixed validation threshold when the attacker
+replaces $k$ features, by attack scope (mean $\pm$ SD over five repetitions; for
+random subsets, over 20 subsets). M1: features drawn independently; M2: copied
+jointly from one non-Sybil address. Wallet-local (25 features): counts, values and
+numbers of chains, contracts and projects, computed from the wallet's own
+transactions and excluding timing features; Ethereum-local (7): the Ethereum-side
+subset. The groups describe the data source of a feature, not the cost of
+changing it.}
+\label{tab:mimcon}
+\fit{rev_mimicry_controls}
+\end{table}
+
+\section{Label robustness}
+The table gives the effect of LayerZero's initial list on the standard labeling (Section~5.3 of the article).
+
+\begin{table}[t]
+\centering
+\caption{Effect of LayerZero's initial list on the standard labeling (LightGBM,
+three model seeds, seed-42 tree split, thresholds from validation). Clean
+negatives: initial-list addresses removed from the negative class in training and
+validation.}
+\label{tab:labelrob}
+\fit{rev_label_robustness}
+\end{table}
+
+\section{Feature-family ablation}
+The table gives the change in F1 when each feature family is removed (Section~5.6 of the article).
+
+\begin{table}[t]
+\centering
+\caption{Feature-family ablation (LightGBM, ten splits, mean $\pm$ SD).
+$\Delta$F1: change against all features; ``F1 lower'': splits in which F1 is lower
+than with all features.}
+\label{tab:famabl}
+\fit{rev_family_ablation}
+\end{table}
+
+\section{Temporal holdout}
+The table gives the temporal holdout at the 20\%, 30\% and 40\% cutoffs (Section~5.6 of the article).
+
+\begin{table}[t]
+\centering
+\caption{Temporal holdout: models trained on earlier LayerZero cohorts and tested
+on the latest 20\%, 30\% and 40\% of addresses by first activity. Columns with
+superscript $r$: reference model trained across cohorts (seed-42 tree split), scored out of sample on the late-cohort rows of its own test partition, a subset of the rows the temporal model is scored on.}
+\label{tab:temporal}
+\fit{rev_temporal_holdout}
+\end{table}
+
+\end{document}
