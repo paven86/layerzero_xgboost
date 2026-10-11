@@ -1,5 +1,5 @@
-# Author order, name split and ORCIDs are still to be confirmed by the authors.
-# No license is stated: the repository has no LICENSE yet.
+# Author order confirmed by the authors. ORCIDs of Scott Imig and Phan Thanh Duc to be added.
+# The MIT license covers the code; third-party data in data/ keep their own terms (DATA.md).
 cff-version: 1.2.0
 message: >-
   If you use this code or data, please cite it using the metadata in this file,
@@ -9,9 +9,11 @@ title: >-
   Analysis — code and data
 type: software
 version: "2.0-revision"
+license: MIT
 authors:
   - given-names: Thuat
     family-names: Do
+    orcid: "https://orcid.org/0000-0002-8156-6983"
   - given-names: Scott
     family-names: Imig
   - given-names: Thanh Duc
