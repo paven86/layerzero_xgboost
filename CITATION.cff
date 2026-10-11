@@ -5,8 +5,8 @@ message: >-
   If you use this code or data, please cite it using the metadata in this file,
   and cite the accompanying paper.
 title: >-
-  Sybil Detection on Public Blockchains via XGBoost and Gas Provision Network
-  Analysis — code and data
+  Same Cluster, Different Wallet: Cluster Dependence in Airdrop Sybil Detection,
+  Evidence from the LayerZero Airdrop — code and data
 type: software
 version: "2.0-revision"
 license: MIT
