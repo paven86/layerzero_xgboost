@@ -263,8 +263,7 @@ The table gives the temporal holdout at the 20\%, 30\% and 40\% cutoffs (Section
 \begin{table}[t]
 \centering
 \caption{Temporal holdout: models trained on earlier LayerZero cohorts and tested
-on the latest 20\%, 30\% and 40\% of addresses by first activity. Columns with
-superscript $r$: reference model trained across cohorts (seed-42 tree split), scored out of sample on the late-cohort rows of its own test partition, a subset of the rows the temporal model is scored on.}
+on the latest 20\%, 30\% and 40\% of addresses by first activity. Same-cohort reference: the model trained across cohorts (seed-42 tree split), scored out of sample on the late-cohort rows of its own test partition, a subset of the rows the temporal model is scored on.}
 \label{tab:temporal}
 \fit{rev_temporal_holdout}
 \end{table}
