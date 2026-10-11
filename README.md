@@ -4,6 +4,10 @@
 
 Trains four classifiers (XGBoost, LightGBM, Random Forest, Logistic Regression) and a cross-model ensemble on 434,786 Ethereum addresses to identify Sybil wallets in the LayerZero airdrop of June 2024. Every number below is produced by a notebook in this repository. `10_tie_out.ipynb` checks the core pipeline through notebook 09, and `99_tie_out_revision.ipynb` checks the revision notebooks and their dependencies. The corrected publication rerun completed on x86_64 Linux and `99` passed all checks.
 
+**Cite** this code and data as: Do T., Imig S., Phan T.D. *Same Cluster, Different Wallet: Cluster Dependence in
+Airdrop Sybil Detection, Evidence from the LayerZero Airdrop — code and data* (v2.0-revision). Zenodo.
+[doi:10.5281/zenodo.23294882](https://doi.org/10.5281/zenodo.23294882). Metadata: [`CITATION.cff`](CITATION.cff).
+
 ---
 
 ## Benchmark results
