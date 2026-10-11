@@ -18,6 +18,9 @@ before any change to it.
 `22`, `24` and `25`. `06`, `10`, `23` and `99` read no file in `data/`; they read saved predictions and results.
 The model uses 62 of the computed features (`sp.FEATS`; `gini_coefficient` is computed but removed by `01`).
 
+**License.** The code in this repository is under the MIT license (`LICENSE`). It does not relicense the
+third-party data in `data/`: those files keep their sources' terms, listed per folder below.
+
 ## Contents
 
 | Folder | What | Rows | Used by |
