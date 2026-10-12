@@ -1,6 +1,6 @@
 # LayerZero Sybil Detection: ML Pipeline
 
-> Reproduces and extends: *Sybil Detection on Public Blockchains via XGBoost and Gas Provision Network Analysis* (Imig et al., 2025)
+> Code and data for *Same Cluster, Different Wallet: Cluster Dependence in Airdrop Sybil Detection, Evidence from the LayerZero Airdrop* (Do, Imig and Phan; revised manuscript, Blockchain: Research and Applications).
 
 Trains four classifiers (XGBoost, LightGBM, Random Forest, Logistic Regression) and a cross-model ensemble on 434,786 Ethereum addresses to identify Sybil wallets in the LayerZero airdrop of June 2024. Every number below is produced by a notebook in this repository. `10_tie_out.ipynb` checks the core pipeline through notebook 09, and `99_tie_out_revision.ipynb` checks the revision notebooks and their dependencies. The corrected publication rerun completed on x86_64 Linux and `99` passed all checks.
 
@@ -10,11 +10,23 @@ Airdrop Sybil Detection, Evidence from the LayerZero Airdrop — code and data* 
 
 ---
 
-## Benchmark results
+## Key results
+
+- LightGBM over 10 tree-level splits: AUROC 0.969, AP 0.761, F1 0.709 ± 0.008; LightGBM, XGBoost and
+  Random Forest are statistically tied (corrected p ≥ 0.23).
+- 99% of test Sybils share a bounty report with a training Sybil even under the tree split.
+- Paired design: withholding report-mates lowered AUROC and F1 in all 15 fold-repeats (mean AUROC 0.971
+  to 0.895; mean F1 down 0.230).
+- 34,545 addresses on LayerZero's initial list are labeled non-Sybil and account for 42% of apparent
+  false positives at the validation threshold.
+- Replacing the five most important features cuts recall from 0.73 to below 0.05.
+
+## Seed-42 test results (single split)
 
 Stratified group split on gas provision trees (no tree spans train and test). Test partition:
 130,435 addresses, 5,463 Sybil (4.19 %). Hyperparameters, thresholds and the blend weight are chosen
-on validation; test labels are used only for this table.
+on validation; test labels are used only for this table. The cross-ensemble gains at most 0.002 on any
+metric and is reported in Appendix B of the paper, not as a method of its own.
 
 | Model | Precision | Recall | F1 | AUROC | AP | FPR |
 |---|---|---|---|---|---|---|

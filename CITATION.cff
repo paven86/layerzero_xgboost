@@ -21,11 +21,11 @@ authors:
     family-names: Phan
 repository-code: "https://github.com/paven86/layerzero_xgboost"
 abstract: >-
-  Code and input data that train and evaluate XGBoost, LightGBM, random forest and
-  logistic regression classifiers, and a cross-model ensemble, on 434,786 Ethereum
-  addresses to identify Sybil wallets in the LayerZero airdrop of June 2024, using
-  62 transaction and gas provision network features, evaluated on stratified group
-  splits by gas provision tree, with every result traced to one commit.
+  Code and data that evaluate behavioral Sybil detectors on 434,786 Ethereum addresses
+  from the LayerZero airdrop at three levels of dependence between training and test
+  data (address, gas provision tree and bounty report), including a paired design that
+  isolates report-level dependence, with 62 features, both label sets and every result
+  traced to one commit.
 keywords:
   - Sybil detection
   - airdrop

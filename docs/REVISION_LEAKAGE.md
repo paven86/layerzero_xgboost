@@ -1,3 +1,5 @@
+Historical log. Final numbers are in results/ and the paper; entries before 2026-10-09 predate the root tree-feature fix and use the earlier class names.
+
 # Revision tracker: data leakage
 
 Manuscript BCRA-D-26-00643, resubmission due Oct 12, 2026. Repo baseline: paven86/layerzero_xgboost @ 11366f4.
