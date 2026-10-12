@@ -6,7 +6,7 @@
 \usepackage{amsmath,amssymb,booktabs,multirow,array,adjustbox,enumitem,url,xurl}
 \newcommand{\fit}[1]{\begin{adjustbox}{max width=\textwidth,center}\small\input{../tables/#1}\end{adjustbox}}
 \renewcommand{\thesection}{S\arabic{section}}
-\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thetable}{\thesection}   % one table per section at most: Table S2 sits in section S2
 \title{Supplementary Material for\\ ``Same Cluster, Different Wallet: Cluster Dependence in Airdrop Sybil Detection, Evidence from the LayerZero Airdrop''}
 \author{Thuat Do, Scott Imig and Phan Thanh Duc}
 \date{}
